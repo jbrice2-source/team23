@@ -59,11 +59,11 @@ def setup(args):
     config_path = args[0]
     config = utils.load(config_path)
     # -- THE CA MUST BE RELOADED IN THE GUI IF ANY OF THE BELOW ARE CHANGED --
-    config.title = "Simple Model 1e"
+    config.title = "Simple Model 1"
     config.dimensions = 2
     config.num_generations = 500
     # -- States
-    # 0 - chaparral
+    # 0 - Chapparal
     # 1 - Dense forest
     # 2 - Canyon
     # 3 - Water
@@ -83,7 +83,7 @@ def setup(args):
     config.state_colors = [(0.75, 0.75, 0.0),(0.314, 0.384, 0.157),(0.988, 1, 0.004), 
                            (0.0, 0.6, 1.0), (0.51, 0.027, 0.631),(0.98, 0.145, 0.953),
                            (0.988, 0.616, 0.016),(0.688, 0.306, 0.016), (0.671, 0.004, 0.004), 
-                           (0.549, 0.549, 0.549),(0.322, 0.188, 0.012), (0.3,0.3,0.3), (1,0,0)]
+                           (0.549, 0.549, 0.549),(0.322, 0.188, 0.012), (0.3,0.3,0.3)]
     config.grid_dims = (200,200)
     config.wrap = False
 
@@ -107,13 +107,23 @@ def setup(args):
     return config
 
 
-def transition_function(grid, neighbourstates, neighbourcounts):
+def transition_function(grid, neighbourstates, neighbourcounts, decaygrid):
     """Function to apply the transition rules
     and return the new grid"""
-    grid[neighbourcounts[5] > 0] = 6
+    grid[neighbourcounts[5] > 0] = 6 #Ignite initial
     chap = (grid == 0)
     forest = (grid == 1)
     canyon = (grid == 2)
+    decaygrid[grid == 6] -= 1 # Decrease burning fuel
+    decaygrid[grid == 7] -= 1
+    decaygrid[grid == 8] -= 1
+    decayed_to_0 = decaygrid == 0 # Find where fuel is burnt away
+    decayed_and_chap = (grid == 6) & decayed_to_0
+    decayed_and_forest = (grid == 7) & decayed_to_0
+    decayed_and_canyon = (grid == 8) & decayed_to_0
+    grid[decayed_and_chap] = 9
+    grid[decayed_and_forest] = 10
+    grid[decayed_and_canyon] = 11
     lands = [chap, forest, canyon]
     probs = [[0.2, 0.8], [0.01, 0.99], [0.9, 0.1]]
     burning_neighbours = neighbourcounts[6] + neighbourcounts[7] + neighbourcounts[8]
@@ -147,9 +157,13 @@ def main():
     terrain_map = generate_initial_map()
 
     # Create grid object using parameters from config + transition function
-    grid = Grid2D(config, transition_function)
-
-    # Run the CA, save grid state every generation to timeline
+    decaygrid = np.zeros(config.grid_dims)
+    decaygrid[:, :] = 100
+    init = generate_initial_map()
+    decaygrid[init == 0] = 5 # Chap fuel
+    decaygrid[init == 1] = 20 # Forest fuel
+    decaygrid[init == 2] = 3 # Canyon fuel
+    grid = Grid2D(config, (transition_function, decaygrid))
     timeline = grid.run()
 
     # Save updated config to file
