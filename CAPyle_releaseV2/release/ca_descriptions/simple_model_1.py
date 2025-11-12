@@ -114,12 +114,16 @@ def transition_function(grid, neighbourstates, neighbourcounts):
     chap = (grid == 0)
     forest = (grid == 1)
     canyon = (grid == 2)
+    lands = [chap, forest, canyon]
+    probs = [[0.2, 0.8], [0.01, 0.99], [0.9, 0.1]]
     burning_neighbours = neighbourcounts[6] + neighbourcounts[7] + neighbourcounts[8]
     # Apply random mask to chapt with burning neighbours
-    grid[chap & (burning_neighbours > 0)] = 6
-    grid[forest & (burning_neighbours > 0)] = 7
-    grid[canyon & (burning_neighbours > 0)] = 8
-
+    for i in range(3):
+        mask = lands[i] & (burning_neighbours > 0) # Create mask for certain land type
+        burn_mask = np.random.choice(a=[True, False], size=np.count_nonzero(mask), p=probs[i]) # Create Probability Boolean over these cells
+        grid_indices = np.where(mask) # Find indices of these cells where it is true
+        grid[grid_indices[0][burn_mask], grid_indices[1][burn_mask]] = i+6
+    
     #cells_that_can_burn & burning
     #if grid in [0,1,2]:
     #    p = {0: 4.5 ,
