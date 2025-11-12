@@ -110,41 +110,46 @@ def setup(args):
 def transition_function(grid, neighbourstates, neighbourcounts, decaygrid):
     """Function to apply the transition rules
     and return the new grid"""
-    grid[neighbourcounts[5] > 0] = 6 #Ignite initial
+    # Ignite initial surrounding cells
+    grid[neighbourcounts[5] > 0] = 6 
+
+    # Mask out Chapparal, Forest and Canyon
     chap = (grid == 0)
     forest = (grid == 1)
     canyon = (grid == 2)
-    decaygrid[grid == 6] -= 1 # Decrease burning fuel
+
+    # Decrease fuel to simulate burning time
+    decaygrid[grid == 6] -= 1 
     decaygrid[grid == 7] -= 1
     decaygrid[grid == 8] -= 1
-    decayed_to_0 = decaygrid == 0 # Find where fuel is burnt away
+    
+    # Find where fuel is burnt away
+    decayed_to_0 = decaygrid == 0 
     decayed_and_chap = (grid == 6) & decayed_to_0
     decayed_and_forest = (grid == 7) & decayed_to_0
     decayed_and_canyon = (grid == 8) & decayed_to_0
+
+    # Transfer burning land to burnt land
     grid[decayed_and_chap] = 9
     grid[decayed_and_forest] = 10
     grid[decayed_and_canyon] = 11
+
+    # Set up helper arrays for shorter code
     lands = [chap, forest, canyon]
     probs = [[0.2, 0.8], [0.01, 0.99], [0.9, 0.1]]
     burning_neighbours = neighbourcounts[6] + neighbourcounts[7] + neighbourcounts[8]
-    # Apply random mask to chapt with burning neighbours
+    
     for i in range(3):
-        mask = lands[i] & (burning_neighbours > 0) # Create mask for certain land type
-        burn_mask = np.random.choice(a=[True, False], size=np.count_nonzero(mask), p=probs[i]) # Create Probability Boolean over these cells
-        grid_indices = np.where(mask) # Find indices of these cells where it is true
+        # Create mask for certain land type
+        mask = lands[i] & (burning_neighbours > 0) 
+
+        # Create Probability Boolean over these cells
+        burn_mask = np.random.choice(a=[True, False], size=np.count_nonzero(mask), p=probs[i]) 
+
+        # Find indices of these cells where it is true
+        grid_indices = np.where(mask) 
         grid[grid_indices[0][burn_mask], grid_indices[1][burn_mask]] = i+6
     
-    #cells_that_can_burn & burning
-    #if grid in [0,1,2]:
-    #    p = {0: 4.5 ,
-    #         1: 1.1, 
-    #         2: 0.6}[grid]
-    #    prob_light = -1/(p*neighbours_on_fire)+1#
-#
-#        if random.random() < prob_light:
- #           return {0: 6,
-  #                  1: 7,
-   #                 2: 8}[grid]
     return grid
 
 
@@ -153,10 +158,8 @@ def main():
     # Get the config object from set up
     config = setup(sys.argv[1:])
 
-    #initial map for transition comparisons
-    terrain_map = generate_initial_map()
-
     # Create grid object using parameters from config + transition function
+    # Also create a fuel decay grid to simulate burning times
     decaygrid = np.zeros(config.grid_dims)
     decaygrid[:, :] = 100
     init = generate_initial_map()
