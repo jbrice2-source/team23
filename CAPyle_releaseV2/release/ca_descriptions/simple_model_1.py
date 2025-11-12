@@ -18,6 +18,14 @@ import numpy as np
 
 import random
 
+# Constant Parameters
+CHAPARRAL_FUEL = 5
+FOREST_FUEL = 20
+CANYON_FUEL = 3
+CHAPARRAL_IGNITION_PROBABILITY = 0.2
+FOREST_IGNITION_PROBABILITY = 0.01
+CANYON_IGNITION_PROBABILITY = 0.9
+
 def generate_initial_map():
 
     def transform_y(num):
@@ -134,9 +142,13 @@ def transition_function(grid, neighbourstates, neighbourcounts, decaygrid):
     grid[decayed_and_forest] = 10
     grid[decayed_and_canyon] = 11
 
-    # Set up helper arrays for shorter code
     lands = [chap, forest, canyon]
-    probs = [[0.2, 0.8], [0.01, 0.99], [0.9, 0.1]]
+    probs = [
+        [CHAPARRAL_IGNITION_PROBABILITY, 1-CHAPARRAL_IGNITION_PROBABILITY], 
+        [FOREST_IGNITION_PROBABILITY, 1-FOREST_IGNITION_PROBABILITY], 
+        [CANYON_IGNITION_PROBABILITY, 1-CANYON_IGNITION_PROBABILITY]
+    ]
+    
     burning_neighbours = neighbourcounts[6] + neighbourcounts[7] + neighbourcounts[8]
     
     for i in range(3):
@@ -161,11 +173,11 @@ def main():
     # Create grid object using parameters from config + transition function
     # Also create a fuel decay grid to simulate burning times
     decaygrid = np.zeros(config.grid_dims)
-    decaygrid[:, :] = 100
+    decaygrid[:, :] = -1 # Use -1 as a placeholder for non burning tiles
     init = generate_initial_map()
-    decaygrid[init == 0] = 5 # Chap fuel
-    decaygrid[init == 1] = 20 # Forest fuel
-    decaygrid[init == 2] = 3 # Canyon fuel
+    decaygrid[init == 0] = CHAPARRAL_FUEL # Chap fuel
+    decaygrid[init == 1] = FOREST_FUEL # Forest fuel
+    decaygrid[init == 2] = CANYON_FUEL # Canyon fuel
     grid = Grid2D(config, (transition_function, decaygrid))
     timeline = grid.run()
 
