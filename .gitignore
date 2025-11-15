@@ -215,3 +215,4 @@ __marimo__/
 .streamlit/secrets.toml
 CAPyle_releaseV2/release/temp/timeline.pkl
 CAPyle_releaseV2/release/temp/config.pkl
+CAPyle_releaseV2/release/runpy.bat
