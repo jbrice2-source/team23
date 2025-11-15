@@ -56,8 +56,9 @@ def generate_initial_map():
     initial_map[transform_y(50), transform_x(5)] = 5
     initial_map[transform_y(50), transform_x(50)] = 5
 
-    # TESTING IGNITION POINT IN THE CENTER
+    # TESTING IGNITION POINTS
     initial_map[transform_y(30), transform_x(25)] = 5
+    initial_map[transform_y(50), transform_x(0)] = 5
 
     #Set Town
     initial_map[transform_y(5-1.25):transform_y(5+1.25), transform_x(15-1.25):transform_x(15+1.25)] = 4
@@ -121,13 +122,13 @@ def setup(args):
 def transition_function(grid, neighbourstates, neighbourcounts, decaygrid):
     """Function to apply the transition rules
     and return the new grid"""
-    print(np.shape(neighbourstates))
+    # print(np.shape(neighbourstates))
     # unpacking neighbour states
     NW, N, NE, W, E, SW, S, SE = neighbourstates
     # enables or disables wind effects
     wind = True
     # corresponds to the direction in the neighbourstates array (e.g. 0 is NW, 1 is N..)
-    wind_direction = 1 # testing with wind blowing from the North
+    wind_direction = 3 # testing with wind blowing from the North
 
     cartesian_angles_degrees = np.array([
         315, 0, 45,
@@ -170,7 +171,9 @@ def transition_function(grid, neighbourstates, neighbourcounts, decaygrid):
         for cartesian_angle_index, burning_dir in enumerate(burning_dirs):
             # Find all cells that have a burning dir niehgbour
             indices_of_burning_dir = np.where(burning_dir)
-            prob_grid[indices_of_burning_dir] += 0.1 * -np.cos(cartesian_angles[cartesian_angle_index])
+            print(cartesian_angle_index)            
+            # prob_grid[indices_of_burning_dir] += 0.2 * -np.cos(cartesian_angles[cartesian_angle_index])
+            prob_grid[indices_of_burning_dir] += -np.cos(affected_by_wind[cartesian_angle_index])
 
 
     # Ignite initial surrounding cells
@@ -199,7 +202,15 @@ def transition_function(grid, neighbourstates, neighbourcounts, decaygrid):
 
     # Ignite cells
     random_grid = np.random.rand(200,200)
-    grid[random_grid < prob_grid] += 6  
+
+    # grid[random_grid < prob_grid] += 6  
+    burning_chap = (random_grid < (prob_grid * CHAPARRAL_IGNITION_PROBABILITY)) & chap
+    burning_forest = (random_grid < (prob_grid * FOREST_IGNITION_PROBABILITY)) & forest
+    burning_canyon = (random_grid < (prob_grid * CANYON_IGNITION_PROBABILITY)) & canyon
+    grid[burning_chap] = 6
+    grid[burning_forest] = 7
+    grid[burning_canyon] = 8
+
     
     return grid
 
