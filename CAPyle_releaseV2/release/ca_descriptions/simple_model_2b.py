@@ -119,26 +119,18 @@ def setup(args):
     return config
 
 
-def transition_function(grid, neighbourstates, neighbourcounts, decaygrid):
+def transition_function(grid, neighbourstates, neighbourcounts, decaygrid, wind_dir):
     """Function to apply the transition rules
     and return the new grid"""
     # print(np.shape(neighbourstates))
     # unpacking neighbour states
     NW, N, NE, W, E, SW, S, SE = neighbourstates
     # enables or disables wind effects
-    wind = True
+    wind_direction = None
+    if wind_dir:
+        wind = True
+        wind_direction = wind_dir[0]
     # corresponds to the direction in the neighbourstates array (e.g. 0 is NW, 1 is N..)
-    wind_direction = {
-        'NW': 0,
-        'N': 1,
-        'NE': 2,
-        'W': 3,
-        'E': 4,
-        'SW': 5,
-        'S': 6,
-        'SE': 7
-    }['SE']  # I.e if wind is north, it blows from the 
-    # north and southern tiles are more likely to light
 
     cartesian_angles_degrees = np.array([
         315, 0, 45,
@@ -210,6 +202,10 @@ def transition_function(grid, neighbourstates, neighbourcounts, decaygrid):
     grid[burning_forest] = 7
     grid[burning_canyon] = 8
 
+    # Change wind direction with probability 0.05
+    if random.random() < 0.05:    
+        wind_dir[0] = random.randint(0, 7)
+        print("Changed wind dir")
     
     return grid
 
@@ -227,7 +223,18 @@ def main():
     decaygrid[init == 0] = CHAPARRAL_FUEL # Chap fuel
     decaygrid[init == 1] = FOREST_FUEL # Forest fuel
     decaygrid[init == 2] = CANYON_FUEL # Canyon fuel
-    grid = Grid2D(config, (transition_function, decaygrid))
+    wind_direction = [{
+        'NW': 0,
+        'N': 1,
+        'NE': 2,
+        'W': 3,
+        'E': 4,
+        'SW': 5,
+        'S': 6,
+        'SE': 7
+    }['N']]  # I.e if wind is north, it blows from the 
+    # north and southern tiles are more likely to light
+    grid = Grid2D(config, (transition_function, decaygrid, wind_direction))
     timeline = grid.run()
 
     # Save updated config to file
