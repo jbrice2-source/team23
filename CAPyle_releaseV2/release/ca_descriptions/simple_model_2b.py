@@ -19,12 +19,12 @@ import numpy as np
 import random
 
 # Constant Parameters
-CHAPARRAL_FUEL = 5
-FOREST_FUEL = 20
-CANYON_FUEL = 3
-CHAPARRAL_IGNITION_PROBABILITY = 0.2
-FOREST_IGNITION_PROBABILITY = 0.01
-CANYON_IGNITION_PROBABILITY = 0.9
+CHAPARRAL_FUEL = 100
+FOREST_FUEL = 200
+CANYON_FUEL = 100
+CHAPARRAL_IGNITION_PROBABILITY = 0.2/8
+FOREST_IGNITION_PROBABILITY = 0.01/8
+CANYON_IGNITION_PROBABILITY = 0.9/8
 
 def generate_initial_map():
 
@@ -128,7 +128,17 @@ def transition_function(grid, neighbourstates, neighbourcounts, decaygrid):
     # enables or disables wind effects
     wind = True
     # corresponds to the direction in the neighbourstates array (e.g. 0 is NW, 1 is N..)
-    wind_direction = 3 # testing with wind blowing from the North
+    wind_direction = {
+        'NW': 0,
+        'N': 1,
+        'NE': 2,
+        'W': 3,
+        'E': 4,
+        'SW': 5,
+        'S': 6,
+        'SE': 7
+    }['SE']  # I.e if wind is north, it blows from the 
+    # north and southern tiles are more likely to light
 
     cartesian_angles_degrees = np.array([
         315, 0, 45,
@@ -137,10 +147,6 @@ def transition_function(grid, neighbourstates, neighbourcounts, decaygrid):
     ])
     cartesian_angles = np.deg2rad(cartesian_angles_degrees)
 
-    wind_array = np.zeros((8))
-    affected_probability = 0
-
-    
     burning_dirs = [
         (NW >= 6) & (NW <= 8), # E.g all burning Northwesterly neighbours
         (N  >= 6) & (N  <= 8),
@@ -152,29 +158,22 @@ def transition_function(grid, neighbourstates, neighbourcounts, decaygrid):
         (SE >= 6) & (SE <= 8)
     ]
 
-    # creates a shifted array where the prevailing wind direction is equal to 0 degrees,
-    # so that all other angles are within a range of 0-360, with 180 being the opposite direction
-    if wind == True:
-        affected_by_wind = [cartesian_angles[(wind_direction + i) % len(cartesian_angles)] for i in range(len(cartesian_angles))]
-        # uses this function so that the selected wind direction is weakest (because fire struggles to spread in the direction the wind is blowing)
-        # and is strongest in the direction the wind is blowing from
-    # use negative cos as it's -1 at origin, +1 at 180
+    # Replaced array shifting by angle shifting in the cos function
+    affected_by_wind = cartesian_angles
 
     # 200x200 burning probability array where we assign base probabilities on burnable
     # land types then skew for neighbours and wind direction
     prob_grid = np.zeros((200,200))
-    #prob_grid[grid == 0] = CHAPARRAL_IGNITION_PROBABILITY
-    #prob_grid[grid == 1] = FOREST_IGNITION_PROBABILITY
-    #prob_grid[grid == 2] = CANYON_IGNITION_PROBABILITY
 
     if wind == True:
-        for cartesian_angle_index, burning_dir in enumerate(burning_dirs):
+        for affected_by_wind_idx, burning_dir in enumerate(burning_dirs):
             # Find all cells that have a burning dir niehgbour
-            indices_of_burning_dir = np.where(burning_dir)
-            print(cartesian_angle_index)            
-            # prob_grid[indices_of_burning_dir] += 0.2 * -np.cos(cartesian_angles[cartesian_angle_index])
-            prob_grid[indices_of_burning_dir] += -np.cos(affected_by_wind[cartesian_angle_index])
+            indices_of_burning_dir = np.where(burning_dir)          
+            # add the neighbour contribution
+            prob_grid[indices_of_burning_dir] += 0.5 * np.cos(affected_by_wind[affected_by_wind_idx]-affected_by_wind[wind_direction])
 
+    
+    prob_grid = np.clip(prob_grid, 0.0, 1.0)
 
     # Ignite initial surrounding cells
     grid[neighbourcounts[5] > 0] = 6 
