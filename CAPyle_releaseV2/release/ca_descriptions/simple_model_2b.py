@@ -39,6 +39,11 @@ def generate_initial_map():
             result -= 1
         return int(result)
     initial_map = np.zeros((200,200))
+
+    # When generating the map, make sure that
+    #  the Y values go from higher to lower
+    #  the X values go from lower to higher
+
     # MAP IS (Y,X)
     #Set Lakes
     initial_map[transform_y(40):transform_y(30), transform_x(17.5):transform_x(20)] = 3
@@ -61,7 +66,7 @@ def generate_initial_map():
     initial_map[transform_y(50), transform_x(0)] = 5
 
     #Set Town
-    initial_map[transform_y(5-1.25):transform_y(5+1.25), transform_x(15-1.25):transform_x(15+1.25)] = 4
+    initial_map[transform_y(5+1.25):transform_y(5-1.25), transform_x(15-1.25):transform_x(15+1.25)] = 4
 
     return initial_map
 
@@ -98,7 +103,7 @@ def setup(args):
                            (0.549, 0.549, 0.549),(0.322, 0.188, 0.012), (0.3,0.3,0.3)]
     config.grid_dims = (200,200)
     config.wrap = False
-
+    
     config.initial_grid = generate_initial_map() #terrain_map
     
     # -------------------------------------------------------------------------
@@ -150,9 +155,6 @@ def transition_function(grid, neighbourstates, neighbourcounts, decaygrid, wind_
         (SE >= 6) & (SE <= 8)
     ]
 
-    # Replaced array shifting by angle shifting in the cos function
-    affected_by_wind = cartesian_angles
-
     # 200x200 burning probability array where we assign base probabilities on burnable
     # land types then skew for neighbours and wind direction
     prob_grid = np.zeros((200,200))
@@ -162,13 +164,13 @@ def transition_function(grid, neighbourstates, neighbourcounts, decaygrid, wind_
             # Find all cells that have a burning dir niehgbour
             indices_of_burning_dir = np.where(burning_dir)          
             # add the neighbour contribution
-            prob_grid[indices_of_burning_dir] += 0.5 * np.cos(affected_by_wind[affected_by_wind_idx]-affected_by_wind[wind_direction])
+            prob_grid[indices_of_burning_dir] += 0.5 * np.cos(cartesian_angles[affected_by_wind_idx]-cartesian_angles[wind_direction])
 
     
     prob_grid = np.clip(prob_grid, 0.0, 1.0)
 
     # Ignite initial surrounding cells
-    grid[neighbourcounts[5] > 0] = 6 
+    grid[(neighbourcounts[5] > 0) & (grid < 4)] = 6 
 
     # Mask out Chapparal, Forest and Canyon
     chap = (grid == 0)
