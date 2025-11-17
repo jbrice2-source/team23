@@ -1,4 +1,4 @@
-# Name: Simple Model 2
+# Name: Forest Fire 2D Task 4 Long Term Intervention
 # Dimensions: 2
 
 # --- Set up executable path, do not edit ---
@@ -81,7 +81,7 @@ def setup(args):
     config_path = args[0]
     config = utils.load(config_path)
     # -- THE CA MUST BE RELOADED IN THE GUI IF ANY OF THE BELOW ARE CHANGED --
-    config.title = "Simple Model 2"
+    config.title = "Forest Fire - \n Long Term Intervention" 
     config.dimensions = 2
     config.num_generations = 500
     # -- States
