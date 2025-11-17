@@ -122,16 +122,16 @@ def setup(args):
 def transition_function(grid, neighbourstates, neighbourcounts, decaygrid, wind_dir):
     """Function to apply the transition rules
     and return the new grid"""
-    # print(np.shape(neighbourstates))
     # unpacking neighbour states
     NW, N, NE, W, E, SW, S, SE = neighbourstates
+    
     # enables or disables wind effects
     wind_direction = None
     if wind_dir:
         wind = True
         wind_direction = wind_dir[0]
+    
     # corresponds to the direction in the neighbourstates array (e.g. 0 is NW, 1 is N..)
-
     cartesian_angles_degrees = np.array([
         315, 0, 45,
         270,    90,
