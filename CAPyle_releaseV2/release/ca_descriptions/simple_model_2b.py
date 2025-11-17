@@ -250,6 +250,11 @@ def main():
 
     grid = Grid2D(config, (transition_function, decaygrid, wind_direction, WIND_ENABLED))
     timeline = grid.run()
+    #from matplotlib import pyplot as plt
+    #print(timeline[0])
+    #plt.imshow(timeline[0])
+    #plt.grid(markevery=1)
+    #plt.show()
 
     # Save updated config to file
     config.save()

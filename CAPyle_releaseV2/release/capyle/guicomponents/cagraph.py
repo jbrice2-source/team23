@@ -37,6 +37,7 @@ class _CAGraph(object):
             ax.axis('off')
             self.mat = ax.matshow(data, cmap='gray', interpolation='none',
                                   vmin=states[0], vmax=states[-1])
+            
 
     def clear(self):
         """Clear the graph"""
