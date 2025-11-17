@@ -238,6 +238,11 @@ def main():
     # north and southern tiles are more likely to light
     grid = Grid2D(config, (transition_function, decaygrid, wind_direction))
     timeline = grid.run()
+    #from matplotlib import pyplot as plt
+    #print(timeline[0])
+    #plt.imshow(timeline[0])
+    #plt.grid(markevery=1)
+    #plt.show()
 
     # Save updated config to file
     config.save()

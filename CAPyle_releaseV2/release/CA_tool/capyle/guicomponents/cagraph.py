@@ -34,10 +34,11 @@ class _CAGraph(object):
             self.fig = plt.Figure(frameon=False)
             self.fig.set_size_inches(custom_size)
             ax = self.fig.add_axes([0, 0, 1, 1])
-            ax.axis('off')
+            ax.axis('off') # this file works
             self.mat = ax.matshow(data, cmap='gray', interpolation='none',
                                   vmin=states[0], vmax=states[-1])
-
+            
+            
     def clear(self):
         """Clear the graph"""
         self.fig.clf()
