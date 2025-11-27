@@ -30,6 +30,10 @@ WIND_DIRECTION_TASK_1 = 1
 NUM_SIMULATIONS_TASK_2 = 5
 
 def task_1(num_simulations):
+  '''
+  Compare relative times for fire to reach town between power plant and 
+  incinerator based on prevailing wind direction.
+  '''
   starting_locations = [(5, 50), (50, 50)] # Power plant and incinerator
   for starting_location in starting_locations:
     times_to_reach_town = [] 
@@ -62,6 +66,9 @@ def task_1(num_simulations):
     print(f"Variance: {np.var(times_to_reach_town)}")
 
 def task_2(num_simulations):
+  '''
+  Compare relative time for fire to reach town from incinerator over different wind directions.
+  '''
   incinerator_location = (50, 50)
   for wind_direction in range(0, 8):
     times_to_reach_town = []
@@ -93,7 +100,19 @@ def task_2(num_simulations):
     print(f"Mean: {np.mean(times_to_reach_town)}")
     print(f"Variance: {np.var(times_to_reach_town)}")
 
+  def task_3(num_simulations):
+    '''
+    Run through different water placements and provide statistics
+    '''
+    pass
+
+  def task_4(num_simulations):
+    '''
+    Run through different forest placement and provide statistics
+    '''
+    pass
+
 
 if __name__ == '__main__':
-  #task_1(NUM_SIMULATIONS_TASK_1)
+  task_1(NUM_SIMULATIONS_TASK_1)
   task_2(NUM_SIMULATIONS_TASK_2)
