@@ -39,7 +39,7 @@ def task_1(num_simulations):
     times_to_reach_town = [] 
     for _ in range(num_simulations):
       # Create a CA blank config
-      filepath = sys.path[0]+'/ca_descriptions/simple_model_2b.py'
+      filepath = sys.path[0]+'/ca_descriptions/task_1_task_2_forestfire2d.py'
       ca_config = CAConfig(filepath)
       # Populate CA config
       ca_config = prerun_ca(ca_config)
@@ -74,7 +74,7 @@ def task_2(num_simulations):
     times_to_reach_town = []
     for _ in range(num_simulations):
       # Create a CA blank config
-      filepath = sys.path[0]+'/ca_descriptions/simple_model_2b.py'
+      filepath = sys.path[0]+'/ca_descriptions/task_1_task_2_forestfire2d.py'
       ca_config = CAConfig(filepath)
       # Populate CA config
       ca_config = prerun_ca(ca_config)

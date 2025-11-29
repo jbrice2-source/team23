@@ -20,8 +20,8 @@ from capyle.ca import Grid2D, Neighbourhood, randomise2d
 CHAPARRAL_FUEL = 3
 FOREST_FUEL = 10
 CANYON_FUEL = 1
-CHAPARRAL_IGNITION_PROBABILITY = 0
-FOREST_IGNITION_PROBABILITY = -0.5
+CHAPARRAL_IGNITION_PROBABILITY = 0.0
+FOREST_IGNITION_PROBABILITY = -0.9
 CANYON_IGNITION_PROBABILITY = 0.5
 
 # Constant Parmeters that can be overwritten
@@ -33,8 +33,8 @@ STARTING_LOCATION = (50, 50)
 # For probability functions
 C1 = 0.045
 C2 = 0.131
-WIND_SPEED = 5
-BASE_PROBABILITY = 0.58 - 0.2
+WIND_SPEED = 8
+BASE_PROBABILITY = 0.58
 
 def transform_y(num):
     result = (abs(50 - num) * 4)
@@ -99,7 +99,7 @@ def setup(args):
     # -- THE CA MUST BE RELOADED IN THE GUI IF ANY OF THE BELOW ARE CHANGED --
     config.title = "Simple Model 2"
     config.dimensions = 2
-    config.num_generations = 200
+    config.num_generations = 500
     # -- States
     # 0 - Chapparal
     # 1 - Dense forest
@@ -219,8 +219,8 @@ def transition_function(grid, neighbourstates, neighbourcounts, decaygrid, wind_
     grid[random_grid < prob_grid] += 6 # Ignite cells to be ignited
     
     # Burning neighbour AND TOWN
-    #grid[((neighbourcounts[6] > 0) | (neighbourcounts[7] > 0)
-    #      | (neighbourcounts[8] > 0)) & (grid == 4)] = 12
+    grid[((neighbourcounts[6] > 0) | (neighbourcounts[7] > 0)
+          | (neighbourcounts[8] > 0)) & (grid == 4)] = 12
 
     return grid
 
