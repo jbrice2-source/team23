@@ -16,6 +16,7 @@ from capyle.utils import run_ca
 import sys
 import tkinter as tk
 import tkinter.font as tkFont
+import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from capyle.utils import (set_icon, get_filename_dialog, get_logo,
@@ -25,9 +26,14 @@ from capyle.guicomponents import (_ConfigFrame, _CAGraph, _ScreenshotUI,
                                   _CreateCA, _AboutWindow)
 from capyle import _PlaybackControls
 
-NUM_SIMULATIONS_TASK_1 = 3
+NUM_SIMULATIONS_TASK_1 = 2
 WIND_DIRECTION_TASK_1 = 1
-NUM_SIMULATIONS_TASK_2 = 5
+NUM_SIMULATIONS_TASK_2 = 2
+task_1_mean_powerplant = []
+task_1_mean_incinerator = []
+task_1_variance = []
+task_2_mean = []
+task_2_variance = []
 
 def task_1(num_simulations):
   '''
@@ -60,10 +66,17 @@ def task_1(num_simulations):
           #TODO: Decide whether this should be step or step-1
       if not found:
         times_to_reach_town.append(-1)
+      mean = np.mean(times_to_reach_town)
+      variance = np.var(times_to_reach_town)
+      if starting_location == (5,50):
+        task_1_mean_powerplant.append(mean)
+      else:
+        task_1_mean_incinerator.append(mean)
+      task_1_variance.append(variance)
     print(f"Starting Location: {starting_location}")
     print(times_to_reach_town)
-    print(f"Mean: {np.mean(times_to_reach_town)}")
-    print(f"Variance: {np.var(times_to_reach_town)}")
+    print(f"Mean: {mean}")
+    print(f"Variance: {variance}")
 
 def task_2(num_simulations):
   '''
@@ -112,7 +125,28 @@ def task_2(num_simulations):
     '''
     pass
 
+def plot_task_1(num_simulations, task_1_mean_powerplant, task_1_mean_incinerator):
+  fig, ax = plt.subplots()
+
+  ax.plot(np.arange(1, num_simulations+1), task_1_mean_powerplant, 'x-', linewidth=2.0, label='powerplant')
+  ax.plot(np.arange(1, num_simulations+1), task_1_mean_incinerator, 'o-', linewidth=2.0, label='incinerator')
+  #ax.plot(np.arange(0, num_simulations), task_1_variance, linewidth=2.0)
+
+  ax.set(xlim=(0, num_simulations+1), 
+         xticks=np.arange(0, num_simulations+1),
+        ylim=(np.min(task_1_mean_powerplant)-40, np.max(task_1_mean_incinerator)+41), 
+        yticks=np.arange(np.min(task_1_mean_powerplant)-40, np.max(task_1_mean_incinerator)+40, 10))
+  
+  ax.set_xlabel("Simulations", fontsize=10)
+  ax.set_ylabel("Mean Timesteps taken to reach town", fontsize=10)
+
+  plt.legend(loc = 'upper left')
+  plt.show()
+
 
 if __name__ == '__main__':
   task_1(NUM_SIMULATIONS_TASK_1)
-  task_2(NUM_SIMULATIONS_TASK_2)
+  #task_2(NUM_SIMULATIONS_TASK_2)
+  plot_task_1(NUM_SIMULATIONS_TASK_1, task_1_mean_powerplant, task_1_mean_incinerator)
+
+  
