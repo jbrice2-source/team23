@@ -162,6 +162,8 @@ def transition_function(grid, neighbourstates, neighbourcounts, decaygrid, wind_
         225, 180, 135
     ]))
 
+    wind_direction = wind_dir[0]
+
     prob_grid = np.zeros(grid.shape, dtype=float)
     prob_grid[(grid == 0) | (grid == 1) | (grid == 2)] = 1.0
 
@@ -206,7 +208,7 @@ def transition_function(grid, neighbourstates, neighbourcounts, decaygrid, wind_
         if other.any():
             p_veg[other] = 0.0
 
-        angle_between = cartesian_angles[wind_angle_idx] - cartesian_angles[WIND_DIRECTION]
+        angle_between = cartesian_angles[wind_angle_idx] - cartesian_angles[wind_direction]
         wind_prob = prob_wind(angle=angle_between)
         prob_grid[indices_of_burning_dir] *= (1.0-prob_burn(p_veg, wind_prob))
     
