@@ -27,7 +27,7 @@ CANYON_IGNITION_PROBABILITY = 0.5
 # Constant Parmeters that can be overwritten
 # when called through test rig
 WIND_ENABLED = True
-WIND_DIRECTION = random.choice(['N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW'])
+WIND_DIRECTION = 'NE' #random.choice(['N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW'])
 # A character that represents the wind direction
 # i.e. 'N' is North, 'NW' is North West, 'E' is East etc. 
 WATER_MODE = 'FIXED' # RANDOM or FIXED
