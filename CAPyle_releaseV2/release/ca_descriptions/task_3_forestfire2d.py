@@ -22,7 +22,7 @@ FOREST_FUEL = 10
 CANYON_FUEL = 1
 CHAPARRAL_IGNITION_PROBABILITY = 0.0
 FOREST_IGNITION_PROBABILITY = -0.9
-CANYON_IGNITION_PROBABILITY = 0.5
+CANYON_IGNITION_PROBABILITY = 0.9
 
 # Constant Parmeters that can be overwritten
 # when called through test rig
@@ -53,7 +53,7 @@ def transform_x(num):
     return int(result)
 
 
-def generate_initial_map():
+def generate_initial_map(water_placement=None):
 
     initial_map = np.zeros((200, 200))
 
@@ -80,54 +80,57 @@ def generate_initial_map():
     initial_map[transform_y(40):transform_y(
         17.5), transform_x(35):transform_x(37.5)] = 2
     
-    if WATER_MODE == 'RANDOM':
-        # Set random line of water on map
-        line_length_km = 12.5   # along the long side
-        line_width_km  = 1.0    # thickness of the line
-        
-        # choose random orientation, horiztontal or vertical
-        orientation = random.choice(['H', 'V'])
-        orientation = 'H'  # for testing purposes, fix to horizontal
+    if water_placement is None:
+      if WATER_MODE == 'RANDOM':
+          # Set random line of water on map
+          line_length_km = 12.5   # along the long side
+          line_width_km  = 1.0    # thickness of the line
+          
+          # choose random orientation, horiztontal or vertical
+          orientation = random.choice(['H', 'V'])
+          orientation = 'H'  # for testing purposes, fix to horizontal
 
-        # horizontal line orientation
-        if orientation == 'H':
-            # Horizontal line: long in x, thin in y
-            y0 = random.uniform(0, 50 - line_width_km)
-            y1 = y0 + line_width_km
+          # horizontal line orientation
+          if orientation == 'H':
+              # Horizontal line: long in x, thin in y
+              y0 = random.uniform(0, 50 - line_width_km)
+              y1 = y0 + line_width_km
 
-            x0 = random.uniform(0, 50 - line_length_km)
-            x1 = x0 + line_length_km
+              x0 = random.uniform(0, 50 - line_length_km)
+              x1 = x0 + line_length_km
 
-            initial_map[transform_y(y1):transform_y(y0), transform_x(x0):transform_x(x1)] = 3
+              initial_map[transform_y(y1):transform_y(y0), transform_x(x0):transform_x(x1)] = 3
 
-        # vertical line orientation
-        # else:
-        #     # vertical line, long in y and thin in x
-        #     x0 = random.uniform(0, 50 - line_width_km)
-        #     x1 = x0 + line_width_km
+          # vertical line orientation
+          # else:
+          #     # vertical line, long in y and thin in x
+          #     x0 = random.uniform(0, 50 - line_width_km)
+          #     x1 = x0 + line_width_km
 
-        #     y0 = random.uniform(0, 50 - line_length_km)
-        #     y1 = y0 + line_length_km
+          #     y0 = random.uniform(0, 50 - line_length_km)
+          #     y1 = y0 + line_length_km
 
-        #     initial_map[transform_y(y1):transform_y(y0),transform_x(x0):transform_x(x1)] = 3
-    elif WATER_MODE == 'FIXED':
-        
-        # add specific lines of water in locations deemed most effective to stop fire, chooses one at random
-        water_lines = [
-            # (y_top, y_bottom, x_left, x_right)
-            (15, 14, 0,   12.5),  # left of green forest (at the bottom)
-            (45, 44, 0,   12.5),  # left of green forest (at the top)
-            (18, 17, 25,  37.5),  # underneath canyon
-            (11, 10, 10,  22.5),  # above town
-        ]
+          #     initial_map[transform_y(y1):transform_y(y0),transform_x(x0):transform_x(x1)] = 3
+      elif WATER_MODE == 'FIXED':
+          
+          # add specific lines of water in locations deemed most effective to stop fire, chooses one at random
+          water_lines = [
+              # (y_top, y_bottom, x_left, x_right)
+              (15, 14, 0,   12.5),  # left of green forest (at the bottom)
+              (45, 44, 0,   12.5),  # left of green forest (at the top)
+              (18, 17, 25,  37.5),  # underneath canyon
+              (11, 10, 10,  22.5),  # above town
+          ]
 
-        y_top, y_bottom, x_left, x_right = random.choice(water_lines)
-        
-        # for testing purposes vvvvvvvv, change water_lines(x) to choose specific location, comment out when not in use
-        # y_top, y_bottom, x_left, x_right = water_lines[2]
+          y_top, y_bottom, x_left, x_right = random.choice(water_lines)
+          
+          # for testing purposes vvvvvvvv, change water_lines(x) to choose specific location, comment out when not in use
+          # y_top, y_bottom, x_left, x_right = water_lines[2]
 
+          initial_map[transform_y(y_top):transform_y(y_bottom), transform_x(x_left):transform_x(x_right)] = 3
+    else:
+        y_top, y_bottom, x_left, x_right = water_placement
         initial_map[transform_y(y_top):transform_y(y_bottom), transform_x(x_left):transform_x(x_right)] = 3
-
     # Set Ignition points (Powerplant/Incinerator)
     # initial_map[transform_y(50), transform_x(5)] = 5 # powerplant
     # initial_map[transform_y(50), transform_x(50)] = 5 # incincerator
@@ -179,8 +182,10 @@ def setup(args):
     config.grid_dims = (200, 200)
     config.wrap = False
 
-    config.initial_grid = generate_initial_map()  # terrain_map
-
+    if hasattr(config, 'water_placement'):
+        config.initial_grid = generate_initial_map(config.water_placement)  # terrain_map
+    else:
+        config.initial_grid = generate_initial_map()
     # -------------------------------------------------------------------------
 
     # ---- Override the defaults below (these may be changed at anytime) ----
