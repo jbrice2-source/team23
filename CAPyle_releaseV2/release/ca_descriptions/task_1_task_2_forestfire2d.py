@@ -29,10 +29,6 @@ CANYON_IGNITION_PROBABILITY = 0.5
 WIND_ENABLED = True
 WIND_DIRECTION = 2
 STARTING_LOCATION = (50, 50)  
-=======
-WIND_DIRECTION = 1
-STARTING_LOCATION = (5, 50)  
->>>>>>> Stashed changes
 
 # For probability functions
 C1 = 0.045
@@ -101,7 +97,7 @@ def setup(args):
     config_path = args[0]
     config = utils.load(config_path)
     # -- THE CA MUST BE RELOADED IN THE GUI IF ANY OF THE BELOW ARE CHANGED --
-    config.title = "Simple Model 2"
+    config.title = "Task 1 and 2"
     config.dimensions = 2
     config.num_generations = 500
     # -- States

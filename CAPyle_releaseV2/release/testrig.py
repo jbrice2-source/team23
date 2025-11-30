@@ -39,6 +39,7 @@ task_2_wind_step_matrix = [[] for _ in range(8)]
 
 
 NUM_SIMULATIONS_TASK_3 = 2
+task_3_water_step_matrix = [[] for _ in range(4)]
 
 def task_1(num_simulations):
   '''
@@ -132,6 +133,7 @@ def task_3(num_simulations):
           (11, 10, 10,  22.5),  # above town
   ]
   for water_placement in fixed_water_placements:
+    task_3_water_step_matrix.append(water_placement)
     times_to_reach_town = []
     for _ in range(num_simulations):
       # Create a CA blank config
@@ -153,6 +155,7 @@ def task_3(num_simulations):
         if BURNT_TOWN_STATE in state:
           found = True
           times_to_reach_town.append(step)
+          task_3_water_step_matrix[water_placement.append(step)]
           #TODO: Decide whether this should be step or step-1
       if not found:
         times_to_reach_town.append(-1)
@@ -174,16 +177,10 @@ def task_3(num_simulations):
 def plot_task_1(task_1_powerplant, task_1_incinerator):
   fig, ax = plt.subplots()
 
-<<<<<<< Updated upstream
-  ax.plot(np.arange(1,1), task_1_mean_powerplant, 'x-', linewidth=2.0, label='powerplant')
-  ax.plot(np.arange(2,2), task_1_mean_incinerator, 'x-', linewidth=2.0, label='incinerator')
-  #ax.plot(np.arange(0, num_simulations), task_1_variance, linewidth=2.0)
-=======
-  ax.scatter(np.ones(len(task_1_powerplant)), task_1_powerplant, marker = 'x', vmin=0, vmax=100)
-  ax.scatter(np.ones(len(task_1_incinerator))*2, task_1_incinerator, marker = 'x', vmin=0, vmax=100)
+  ax.scatter(np.ones(len(task_1_powerplant)), task_1_powerplant, marker = 'x', vmin=0, vmax=100, alpha=0.3)
+  ax.scatter(np.ones(len(task_1_incinerator))*2, task_1_incinerator, marker = 'x', vmin=0, vmax=100, alpha=0.3)
   ax.plot(1, np.mean(task_1_powerplant), 'o', markersize = 7, label='powerplant mean')
   ax.plot(2, np.mean(task_1_incinerator), 'o', markersize = 7, label='incinerator mean')
->>>>>>> Stashed changes
 
   ax.set_xticks([1, 2], labels=["Powerplant", "Incinerator"])
 
@@ -200,8 +197,6 @@ def plot_task_1(task_1_powerplant, task_1_incinerator):
 def plot_task_2(task_2_wind_step_matrix):
   fig, ax = plt.subplots()
 
-  #x = task_2_wind_step_matrix[:,]
-
   xlabels = ["NW", "N", "NE",
              "W",        "E",
              "SW", "S", "SE"]
@@ -210,29 +205,55 @@ def plot_task_2(task_2_wind_step_matrix):
     y_values = task_2_wind_step_matrix[wind_direction-1]
 
     ax.scatter(np.ones(len(y_values))*wind_direction, 
-               y_values, marker = 'x', vmin=0, vmax=100)
+               y_values, marker = 'x', vmin=0, vmax=100, alpha=0.7)
     
     ax.plot(wind_direction, np.mean(y_values), 
-            'o', markersize = 7, label=xlabels[wind_direction-1])
+            'o', markersize = 7, label=xlabels[wind_direction-1], alpha = 0.8)
 
   ax.set_xticks(np.arange(1, 9), xlabels)
 
   ax.set(xlim=(0.5, 8.5), 
-        ylim=(370, 601), 
-        yticks=np.arange(370, 600, 10))
+        ylim=(270, 360), 
+        yticks=np.arange(270, 330, 10))
   
-  #ax.set_xlabel("Simulations", fontsize=10)
   ax.set_ylabel("Timesteps taken to reach town", fontsize=10)
 
   plt.legend(loc = 'upper left')
-  plt.show()
+  plt.show()  
 
-  #def plot_task_3(task_)
+def plot_task_3(task_3_water_step_matrix):
+  fig, ax = plt.subplots()
+
+  xlabels = ["Left of Forest","Right of Forest", "Below Canyon", "Above Town"]
+
+  for water_position in range(1, 5): 
+    y_values = task_2_wind_step_matrix[water_position-1]
+
+    ax.scatter(np.ones(len(y_values))*water_position, 
+               y_values, marker = 'x', vmin=0, vmax=100, alpha=0.3)
+    
+    ax.plot(water_position, np.mean(y_values), 
+            'o', markersize = 7, label=xlabels[water_position-1])
+
+  ax.set_xticks(np.arange(1, 5), xlabels)
+
+  ax.set(xlim=(0.5, 5.5), 
+        ylim=(220, 341), 
+        yticks=np.arange(220, 340, 10))
+  
+  ax.set_ylabel("Timesteps taken to reach town", fontsize=10)
+
+  plt.legend(loc = 'upper left')
+  plt.show()  
+
+  pass
 
 if __name__ == '__main__':
   #task_1(NUM_SIMULATIONS_TASK_1)
   #plot_task_1(task_1_powerplant, task_1_incinerator)
+  
   task_2(NUM_SIMULATIONS_TASK_2)
   plot_task_2(task_2_wind_step_matrix)
   #task_3(NUM_SIMULATIONS_TASK_3)
+  #plot_task_3(task_3_water_step_matrix)
   
