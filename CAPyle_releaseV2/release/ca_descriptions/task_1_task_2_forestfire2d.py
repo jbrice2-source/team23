@@ -17,17 +17,17 @@ import capyle.utils as utils
 from capyle.ca import Grid2D, Neighbourhood, randomise2d
 
 # Constant Parameters
-CHAPARRAL_FUEL = 5
-FOREST_FUEL = 8
+CHAPARRAL_FUEL = 3
+FOREST_FUEL = 7
 CANYON_FUEL = 1
 CHAPARRAL_IGNITION_PROBABILITY = -0.8
-FOREST_IGNITION_PROBABILITY = -0.935
+FOREST_IGNITION_PROBABILITY = -0.94
 CANYON_IGNITION_PROBABILITY = 0.5
 
 # Constant Parmeters that can be overwritten
 # when called through test rig
 WIND_ENABLED = True
-WIND_DIRECTION = 0
+WIND_DIRECTION = 2
 STARTING_LOCATION = (50, 50)  
 
 # For probability functions

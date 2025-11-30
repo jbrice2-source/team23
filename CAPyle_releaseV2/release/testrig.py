@@ -169,8 +169,8 @@ def task_3(num_simulations):
 def plot_task_1(num_simulations, task_1_mean_powerplant, task_1_mean_incinerator):
   fig, ax = plt.subplots()
 
-  ax.plot(np.arange(1, num_simulations+1), task_1_mean_powerplant, 'x-', linewidth=2.0, label='powerplant')
-  ax.plot(np.arange(1, num_simulations+1), task_1_mean_incinerator, 'o-', linewidth=2.0, label='incinerator')
+  ax.plot(np.arange(1,1), task_1_mean_powerplant, 'x-', linewidth=2.0, label='powerplant')
+  ax.plot(np.arange(2,2), task_1_mean_incinerator, 'x-', linewidth=2.0, label='incinerator')
   #ax.plot(np.arange(0, num_simulations), task_1_variance, linewidth=2.0)
 
   ax.set(xlim=(0, num_simulations+1), 
