@@ -27,8 +27,13 @@ CANYON_IGNITION_PROBABILITY = 0.5
 # Constant Parmeters that can be overwritten
 # when called through test rig
 WIND_ENABLED = True
+<<<<<<< Updated upstream
 WIND_DIRECTION = 2
 STARTING_LOCATION = (50, 50)  
+=======
+WIND_DIRECTION = 1
+STARTING_LOCATION = (5, 50)  
+>>>>>>> Stashed changes
 
 # For probability functions
 C1 = 0.045
