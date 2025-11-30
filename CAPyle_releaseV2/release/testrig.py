@@ -32,7 +32,7 @@ task_1_powerplant = []
 task_1_incinerator = []
 task_1_variance = []
 
-NUM_SIMULATIONS_TASK_2 = 10
+NUM_SIMULATIONS_TASK_2 = 3
 task_2_mean = []
 task_2_variance = []
 task_2_wind_step_matrix = [[] for _ in range(8)]
@@ -75,9 +75,10 @@ def task_1(num_simulations):
             task_1_incinerator.append(step)
           #TODO: Decide whether this should be step or step-1
       if not found:
-        times_to_reach_town.append(-1)
-      mean = np.mean(times_to_reach_town)
-      variance = np.var(times_to_reach_town)
+        #times_to_reach_town.append(-1)
+        pass
+      mean = np.mean(times_to_reach_town) if len(times_to_reach_town) > 0 else "No Values"
+      variance = np.var(times_to_reach_town) if len(times_to_reach_town) > 0 else "No Values"
     print(f"Starting Location: {starting_location}")
     print(times_to_reach_town)
     print(f"Mean: {mean}")
@@ -114,11 +115,12 @@ def task_2(num_simulations):
           task_2_wind_step_matrix[wind_direction].append(step)
           #TODO: Decide whether this should be step or step-1
       if not found:
-        times_to_reach_town.append(-1)
+        #times_to_reach_town.append(-1)
+        pass
     print(f"Wind Direction: {wind_direction}")
     print(times_to_reach_town)
-    print(f"Mean: {np.mean(times_to_reach_town)}")
-    print(f"Variance: {np.var(times_to_reach_town)}")
+    print(f"Mean: {np.mean(times_to_reach_town) if len(times_to_reach_town) > 0 else 'No Values'}")
+    print(f"Variance: {np.var(times_to_reach_town) if len(times_to_reach_town) > 0 else 'No Values'}")
 
 def task_3(num_simulations):
   '''
@@ -158,15 +160,12 @@ def task_3(num_simulations):
           task_3_water_step_matrix[water_placement.append(step)]
           #TODO: Decide whether this should be step or step-1
       if not found:
-        times_to_reach_town.append(-1)
+        #times_to_reach_town.append(-1)
+        pass
     print(f"Starting Location: {incinerator_location}")
     print(times_to_reach_town)
-    print(f"Mean: {np.mean(times_to_reach_town)}")
-    print(f"Variance: {np.var(times_to_reach_town)}")
-
-
-
-
+    print(f"Mean: {np.mean(times_to_reach_town) if len(times_to_reach_town) > 0 else 'No Values'}")
+    print(f"Variance: {np.var(times_to_reach_town) if len(times_to_reach_town) > 0 else 'No Values'}")
 
   def task_4(num_simulations):
     '''
@@ -176,25 +175,45 @@ def task_3(num_simulations):
 
 def plot_task_1(task_1_powerplant, task_1_incinerator):
   fig, ax = plt.subplots()
+  if len(task_1_powerplant) > 0:
+    ax.scatter(np.ones(len(task_1_powerplant)), task_1_powerplant, marker = 'x', vmin=0, vmax=100, alpha=0.3)
+    ax.plot(1, np.mean(task_1_powerplant), 'o', markersize = 7, label='powerplant mean')
+  else:
+    ax.scatter(np.ones(len(task_1_powerplant)), task_1_powerplant, marker = 'x', vmin=0, vmax=100, alpha=0.3)
 
-  ax.scatter(np.ones(len(task_1_powerplant)), task_1_powerplant, marker = 'x', vmin=0, vmax=100, alpha=0.3)
-  ax.scatter(np.ones(len(task_1_incinerator))*2, task_1_incinerator, marker = 'x', vmin=0, vmax=100, alpha=0.3)
-  ax.plot(1, np.mean(task_1_powerplant), 'o', markersize = 7, label='powerplant mean')
-  ax.plot(2, np.mean(task_1_incinerator), 'o', markersize = 7, label='incinerator mean')
+  
+  if len(task_1_incinerator) > 0:
+    ax.scatter(np.ones(len(task_1_incinerator))*2, task_1_incinerator, marker = 'x', vmin=0, vmax=100, alpha=0.3)
+    ax.plot(2, np.mean(task_1_incinerator), 'o', markersize = 7, label='incinerator mean')
+  else:
+     ax.scatter(np.ones(len(task_1_incinerator))*2, task_1_incinerator, marker = 'x', vmin=0, vmax=100, alpha=0.3)
+
 
   ax.set_xticks([1, 2], labels=["Powerplant", "Incinerator"])
 
-  ax.set(xlim=(0, 3), 
-        ylim=(np.min(task_1_powerplant)-40, np.max(task_1_incinerator)+41), 
-        yticks=np.arange(np.min(task_1_powerplant)-40, np.max(task_1_incinerator)+40, 10))
-  
-  #ax.set_xlabel("Simulations", fontsize=10)
+  # Make y limits still work for empty arrays
+  combined = task_1_powerplant + task_1_incinerator
+  try:
+      mn = int(np.min(combined))
+      mx = int(np.max(combined))
+  except (ValueError, TypeError):
+      y_min, y_max = 0, 500
+  else:
+      y_min = max(0, mn - 40)
+      y_max = mx + 40
+      if y_min == y_max:
+          y_max = y_min + 10
+
+  ax.set(xlim=(0, 3),
+         ylim=(y_min, y_max),
+         yticks=np.arange(y_min, y_max + 1, 10))
   ax.set_ylabel("Timesteps taken to reach town", fontsize=10)
 
   plt.legend(loc = 'upper left')
   plt.show()
 
 def plot_task_2(task_2_wind_step_matrix):
+  
   fig, ax = plt.subplots()
 
   xlabels = ["NW", "N", "NE",
@@ -203,12 +222,17 @@ def plot_task_2(task_2_wind_step_matrix):
 
   for wind_direction in range(1, 9): 
     y_values = task_2_wind_step_matrix[wind_direction-1]
-
-    ax.scatter(np.ones(len(y_values))*wind_direction, 
-               y_values, marker = 'x', vmin=0, vmax=100, alpha=0.7)
+    if len(y_values) > 0:
+      ax.scatter(np.ones(len(y_values))*wind_direction, 
+                y_values, marker = 'x', vmin=0, vmax=100, alpha=0.7)
     
-    ax.plot(wind_direction, np.mean(y_values), 
-            'o', markersize = 7, label=xlabels[wind_direction-1], alpha = 0.8)
+    
+      ax.plot(wind_direction, np.mean(y_values), 
+              'o', markersize = 7, label=xlabels[wind_direction-1], alpha = 0.8)
+    else:
+        ax.scatter(np.ones(len(y_values))*wind_direction, 
+                y_values, marker = 'x', vmin=0, vmax=100, alpha=0.7)
+
 
   ax.set_xticks(np.arange(1, 9), xlabels)
 
@@ -228,12 +252,16 @@ def plot_task_3(task_3_water_step_matrix):
 
   for water_position in range(1, 5): 
     y_values = task_2_wind_step_matrix[water_position-1]
-
-    ax.scatter(np.ones(len(y_values))*water_position, 
-               y_values, marker = 'x', vmin=0, vmax=100, alpha=0.3)
-    
-    ax.plot(water_position, np.mean(y_values), 
-            'o', markersize = 7, label=xlabels[water_position-1])
+    if len(y_values) > 0:
+      ax.scatter(np.ones(len(y_values))*water_position, 
+                y_values, marker = 'x', vmin=0, vmax=100, alpha=0.3)
+      
+      ax.plot(water_position, np.mean(y_values), 
+              'o', markersize = 7, label=xlabels[water_position-1])
+    else:
+      ax.scatter(np.ones(len(y_values))*water_position, 
+              y_values, marker = 'x', vmin=0, vmax=100, alpha=0.3)
+      
 
   ax.set_xticks(np.arange(1, 5), xlabels)
 
@@ -249,11 +277,12 @@ def plot_task_3(task_3_water_step_matrix):
   pass
 
 if __name__ == '__main__':
-  #task_1(NUM_SIMULATIONS_TASK_1)
-  #plot_task_1(task_1_powerplant, task_1_incinerator)
+  task_1(NUM_SIMULATIONS_TASK_1)
+  plot_task_1(task_1_powerplant, task_1_incinerator)
   
   task_2(NUM_SIMULATIONS_TASK_2)
   plot_task_2(task_2_wind_step_matrix)
+  
   #task_3(NUM_SIMULATIONS_TASK_3)
   #plot_task_3(task_3_water_step_matrix)
   
