@@ -28,12 +28,17 @@ from capyle import _PlaybackControls
 
 NUM_SIMULATIONS_TASK_1 = 2
 WIND_DIRECTION_TASK_1 = 1
+<<<<<<< HEAD
 NUM_SIMULATIONS_TASK_2 = 2
 task_1_mean_powerplant = []
 task_1_mean_incinerator = []
 task_1_variance = []
 task_2_mean = []
 task_2_variance = []
+=======
+NUM_SIMULATIONS_TASK_2 = 5
+NUM_SIMULATIONS_TASK_3 = 2
+>>>>>>> 052067619cad40d4fe521edb964d715cf60a9d1a
 
 def task_1(num_simulations):
   '''
@@ -113,11 +118,51 @@ def task_2(num_simulations):
     print(f"Mean: {np.mean(times_to_reach_town)}")
     print(f"Variance: {np.var(times_to_reach_town)}")
 
-  def task_3(num_simulations):
-    '''
-    Run through different water placements and provide statistics
-    '''
-    pass
+def task_3(num_simulations):
+  '''
+  Run through different water placements and provide statistics
+  '''
+  incinerator_location = (50, 50)
+  fixed_water_placements = [
+          # (y_top, y_bottom, x_left, x_right)
+          (15, 14, 0,   12.5),  # left of green forest (at the bottom)
+          (45, 44, 0,   12.5),  # left of green forest (at the top)
+          (18, 17, 25,  37.5),  # underneath canyon
+          (11, 10, 10,  22.5),  # above town
+  ]
+  for water_placement in fixed_water_placements:
+    times_to_reach_town = []
+    for _ in range(num_simulations):
+      # Create a CA blank config
+      filepath = sys.path[0]+'/ca_descriptions/task_3_forestfire2d.py'
+      ca_config = CAConfig(filepath)
+      # Populate CA config
+      ca_config = prerun_ca(ca_config)
+      ca_config.water_placement = water_placement
+      ca_config.starting_location = incinerator_location
+      # Ca Config is  updated Config, Timeline is Array of grid state for each step
+      ca_config, timeline = run_ca(ca_config)
+      # Find State Where Town Was Reached
+      found = False
+      for step, state in enumerate(timeline):
+        if found:
+          break
+        # locate whether town has burnt
+        BURNT_TOWN_STATE = 12
+        if BURNT_TOWN_STATE in state:
+          found = True
+          times_to_reach_town.append(step)
+          #TODO: Decide whether this should be step or step-1
+      if not found:
+        times_to_reach_town.append(-1)
+    print(f"Starting Location: {incinerator_location}")
+    print(times_to_reach_town)
+    print(f"Mean: {np.mean(times_to_reach_town)}")
+    print(f"Variance: {np.var(times_to_reach_town)}")
+
+
+
+
 
   def task_4(num_simulations):
     '''
@@ -145,8 +190,14 @@ def plot_task_1(num_simulations, task_1_mean_powerplant, task_1_mean_incinerator
 
 
 if __name__ == '__main__':
+<<<<<<< HEAD
   task_1(NUM_SIMULATIONS_TASK_1)
   #task_2(NUM_SIMULATIONS_TASK_2)
   plot_task_1(NUM_SIMULATIONS_TASK_1, task_1_mean_powerplant, task_1_mean_incinerator)
 
   
+=======
+  #task_1(NUM_SIMULATIONS_TASK_1)
+  #task_2(NUM_SIMULATIONS_TASK_2)
+  task_3(NUM_SIMULATIONS_TASK_3)
+>>>>>>> 052067619cad40d4fe521edb964d715cf60a9d1a
