@@ -28,17 +28,13 @@ from capyle import _PlaybackControls
 
 NUM_SIMULATIONS_TASK_1 = 2
 WIND_DIRECTION_TASK_1 = 1
-<<<<<<< HEAD
-NUM_SIMULATIONS_TASK_2 = 2
 task_1_mean_powerplant = []
 task_1_mean_incinerator = []
 task_1_variance = []
 task_2_mean = []
 task_2_variance = []
-=======
 NUM_SIMULATIONS_TASK_2 = 5
 NUM_SIMULATIONS_TASK_3 = 2
->>>>>>> 052067619cad40d4fe521edb964d715cf60a9d1a
 
 def task_1(num_simulations):
   '''
@@ -190,14 +186,7 @@ def plot_task_1(num_simulations, task_1_mean_powerplant, task_1_mean_incinerator
 
 
 if __name__ == '__main__':
-<<<<<<< HEAD
   task_1(NUM_SIMULATIONS_TASK_1)
-  #task_2(NUM_SIMULATIONS_TASK_2)
+  task_2(NUM_SIMULATIONS_TASK_2)
   plot_task_1(NUM_SIMULATIONS_TASK_1, task_1_mean_powerplant, task_1_mean_incinerator)
-
-  
-=======
-  #task_1(NUM_SIMULATIONS_TASK_1)
-  #task_2(NUM_SIMULATIONS_TASK_2)
   task_3(NUM_SIMULATIONS_TASK_3)
->>>>>>> 052067619cad40d4fe521edb964d715cf60a9d1a
