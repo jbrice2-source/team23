@@ -26,18 +26,18 @@ from capyle.guicomponents import (_ConfigFrame, _CAGraph, _ScreenshotUI,
                                   _CreateCA, _AboutWindow)
 from capyle import _PlaybackControls
 
-NUM_SIMULATIONS_TASK_1 = 5
+NUM_SIMULATIONS_TASK_1 = 10
 WIND_DIRECTION_TASK_1 = 1
 task_1_powerplant = []
 task_1_incinerator = []
 task_1_variance = []
 
-NUM_SIMULATIONS_TASK_2 = 5
+NUM_SIMULATIONS_TASK_2 = 10
 task_2_mean = []
 task_2_variance = []
 task_2_wind_step_matrix = [[] for _ in range(8)]
 
-NUM_SIMULATIONS_TASK_3 = 5
+NUM_SIMULATIONS_TASK_3 = 10
 task_3_water_step_matrix = [[] for _ in range(4)]
 
 def task_1(num_simulations):
