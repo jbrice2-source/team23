@@ -26,19 +26,18 @@ from capyle.guicomponents import (_ConfigFrame, _CAGraph, _ScreenshotUI,
                                   _CreateCA, _AboutWindow)
 from capyle import _PlaybackControls
 
-NUM_SIMULATIONS_TASK_1 = 3
+NUM_SIMULATIONS_TASK_1 = 5
 WIND_DIRECTION_TASK_1 = 1
 task_1_powerplant = []
 task_1_incinerator = []
 task_1_variance = []
 
-NUM_SIMULATIONS_TASK_2 = 3
+NUM_SIMULATIONS_TASK_2 = 5
 task_2_mean = []
 task_2_variance = []
 task_2_wind_step_matrix = [[] for _ in range(8)]
 
-
-NUM_SIMULATIONS_TASK_3 = 2
+NUM_SIMULATIONS_TASK_3 = 5
 task_3_water_step_matrix = [[] for _ in range(4)]
 
 def task_1(num_simulations):
@@ -134,8 +133,7 @@ def task_3(num_simulations):
           (18, 17, 25,  37.5),  # underneath canyon
           (11, 10, 10,  22.5),  # above town
   ]
-  for water_placement in fixed_water_placements:
-    task_3_water_step_matrix.append(water_placement)
+  for water_placement_idx, water_placement in enumerate(fixed_water_placements):
     times_to_reach_town = []
     for _ in range(num_simulations):
       # Create a CA blank config
@@ -157,7 +155,7 @@ def task_3(num_simulations):
         if BURNT_TOWN_STATE in state:
           found = True
           times_to_reach_town.append(step)
-          task_3_water_step_matrix[water_placement.append(step)]
+          task_3_water_step_matrix[water_placement_idx].append(step)
           #TODO: Decide whether this should be step or step-1
       if not found:
         #times_to_reach_town.append(-1)
@@ -186,8 +184,8 @@ def plot_task_1(task_1_powerplant, task_1_incinerator):
     ax.scatter(np.ones(len(task_1_incinerator))*2, task_1_incinerator, marker = 'x', vmin=0, vmax=100, alpha=0.3)
     ax.plot(2, np.mean(task_1_incinerator), 'o', markersize = 7, label='incinerator mean')
   else:
-     ax.scatter(np.ones(len(task_1_incinerator))*2, task_1_incinerator, marker = 'x', vmin=0, vmax=100, alpha=0.3)
-
+    ax.scatter(np.ones(len(task_1_incinerator))*2, task_1_incinerator, marker = 'x', vmin=0, vmax=100, alpha=0.3)
+    
 
   ax.set_xticks([1, 2], labels=["Powerplant", "Incinerator"])
 
@@ -213,54 +211,52 @@ def plot_task_1(task_1_powerplant, task_1_incinerator):
   plt.show()
 
 def plot_task_2(task_2_wind_step_matrix):
-  
   fig, ax = plt.subplots()
 
   xlabels = ["NW", "N", "NE",
              "W",        "E",
              "SW", "S", "SE"]
 
-  for wind_direction in range(1, 9): 
+  for wind_direction in range(1, 9):
     y_values = task_2_wind_step_matrix[wind_direction-1]
     if len(y_values) > 0:
-      ax.scatter(np.ones(len(y_values))*wind_direction, 
-                y_values, marker = 'x', vmin=0, vmax=100, alpha=0.7)
-    
-    
-      ax.plot(wind_direction, np.mean(y_values), 
-              'o', markersize = 7, label=xlabels[wind_direction-1], alpha = 0.8)
+      ax.scatter(np.ones(len(y_values))*wind_direction,
+                 y_values, marker='x', alpha=0.7)
+      ax.plot(wind_direction, np.mean(y_values),
+              'o', markersize=7, label=xlabels[wind_direction-1], alpha=0.8)
     else:
-        ax.scatter(np.ones(len(y_values))*wind_direction, 
-                y_values, marker = 'x', vmin=0, vmax=100, alpha=0.7)
+      ax.scatter(np.ones(len(y_values))*wind_direction,
+                 y_values, marker='x', alpha=0.7)
+      ax.plot([], [], 'o', markersize=7, label=xlabels[wind_direction-1])
 
+  ax.set_xticks(np.arange(1, 9))
+  ax.set_xticklabels(xlabels)
 
-  ax.set_xticks(np.arange(1, 9), xlabels)
+  ax.set_ylim(0, 500)
+  ax.set_yticks(np.arange(0, 501, 20))
 
-  ax.set(xlim=(0.5, 8.5), 
-        ylim=(270, 360), 
-        yticks=np.arange(270, 330, 10))
-  
   ax.set_ylabel("Timesteps taken to reach town", fontsize=10)
 
-  plt.legend(loc = 'upper left')
-  plt.show()  
+  plt.legend(loc='upper left')
+  plt.show()
 
 def plot_task_3(task_3_water_step_matrix):
   fig, ax = plt.subplots()
 
-  xlabels = ["Left of Forest","Right of Forest", "Below Canyon", "Above Town"]
+  xlabels = ["Left of\n Forest","Right of\n Forest", "Below Canyon", "Above Town"]
 
-  for water_position in range(1, 5): 
-    y_values = task_2_wind_step_matrix[water_position-1]
+  for water_position in range(0, 4): 
+    y_values = task_3_water_step_matrix[water_position]
     if len(y_values) > 0:
-      ax.scatter(np.ones(len(y_values))*water_position, 
+      ax.scatter(np.ones(len(y_values))*(water_position+1), 
                 y_values, marker = 'x', vmin=0, vmax=100, alpha=0.3)
       
-      ax.plot(water_position, np.mean(y_values), 
-              'o', markersize = 7, label=xlabels[water_position-1])
+      ax.plot(water_position+1, np.mean(y_values), 
+              'o', markersize = 7, label=xlabels[water_position])
     else:
-      ax.scatter(np.ones(len(y_values))*water_position, 
+      ax.scatter(np.ones(len(y_values))*(water_position+1), 
               y_values, marker = 'x', vmin=0, vmax=100, alpha=0.3)
+      ax.plot([], [], 'o', markersize=7, label=xlabels[water_position])
       
 
   ax.set_xticks(np.arange(1, 5), xlabels)
@@ -274,8 +270,6 @@ def plot_task_3(task_3_water_step_matrix):
   plt.legend(loc = 'upper left')
   plt.show()  
 
-  pass
-
 if __name__ == '__main__':
   task_1(NUM_SIMULATIONS_TASK_1)
   plot_task_1(task_1_powerplant, task_1_incinerator)
@@ -283,6 +277,6 @@ if __name__ == '__main__':
   task_2(NUM_SIMULATIONS_TASK_2)
   plot_task_2(task_2_wind_step_matrix)
   
-  #task_3(NUM_SIMULATIONS_TASK_3)
-  #plot_task_3(task_3_water_step_matrix)
+  task_3(NUM_SIMULATIONS_TASK_3)
+  plot_task_3(task_3_water_step_matrix)
   
