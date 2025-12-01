@@ -77,13 +77,10 @@ def generate_initial_map():
     initial_map[transform_y(40):transform_y(
         17.5), transform_x(35):transform_x(37.5)] = 2
 
+    # Literal Ignition Points when not running through a Testrig
     # Set Ignition points (Powerplant/Incinerator)
     # initial_map[transform_y(50), transform_x(5)] = 5 # powerplant
     # initial_map[transform_y(50), transform_x(50)] = 5 # incincerator
-
-    # TESTING IGNITION POINTS
-    # initial_map[transform_y(30), transform_x(25)] = 5
-    # initial_map[transform_y(50), transform_x(0)] = 5
 
     # Set Town
     initial_map[transform_y(5+1.25):transform_y(5-1.25),
@@ -277,3 +274,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+
