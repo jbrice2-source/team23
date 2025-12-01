@@ -101,16 +101,6 @@ def generate_initial_map(water_placement=None):
 
               initial_map[transform_y(y1):transform_y(y0), transform_x(x0):transform_x(x1)] = 3
 
-          # vertical line orientation
-          # else:
-          #     # vertical line, long in y and thin in x
-          #     x0 = random.uniform(0, 50 - line_width_km)
-          #     x1 = x0 + line_width_km
-
-          #     y0 = random.uniform(0, 50 - line_length_km)
-          #     y1 = y0 + line_length_km
-
-          #     initial_map[transform_y(y1):transform_y(y0),transform_x(x0):transform_x(x1)] = 3
       elif WATER_MODE == 'FIXED':
           
           # add specific lines of water in locations deemed most effective to stop fire, chooses one at random
@@ -123,21 +113,16 @@ def generate_initial_map(water_placement=None):
           ]
 
           y_top, y_bottom, x_left, x_right = random.choice(water_lines)
-          
-          # for testing purposes vvvvvvvv, change water_lines(x) to choose specific location, comment out when not in use
-          # y_top, y_bottom, x_left, x_right = water_lines[2]
 
           initial_map[transform_y(y_top):transform_y(y_bottom), transform_x(x_left):transform_x(x_right)] = 3
     else:
         y_top, y_bottom, x_left, x_right = water_placement
         initial_map[transform_y(y_top):transform_y(y_bottom), transform_x(x_left):transform_x(x_right)] = 3
+
+    # Literal Ignition Points when not running through a Testrig 
     # Set Ignition points (Powerplant/Incinerator)
     # initial_map[transform_y(50), transform_x(5)] = 5 # powerplant
     # initial_map[transform_y(50), transform_x(50)] = 5 # incincerator
-
-    # TESTING IGNITION POINTS
-    # initial_map[transform_y(30), transform_x(25)] = 5
-    # initial_map[transform_y(50), transform_x(0)] = 5
 
     # Set Town
     initial_map[transform_y(5+1.25):transform_y(5-1.25),
@@ -358,3 +343,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+

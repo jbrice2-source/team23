@@ -72,7 +72,6 @@ def task_1(num_simulations):
             task_1_powerplant.append(step)
           else:
             task_1_incinerator.append(step)
-          #TODO: Decide whether this should be step or step-1
       if not found:
         #times_to_reach_town.append(-1)
         pass
@@ -112,7 +111,6 @@ def task_2(num_simulations):
           found = True
           times_to_reach_town.append(step)
           task_2_wind_step_matrix[wind_direction].append(step)
-          #TODO: Decide whether this should be step or step-1
       if not found:
         #times_to_reach_town.append(-1)
         pass
@@ -156,7 +154,6 @@ def task_3(num_simulations):
           found = True
           times_to_reach_town.append(step)
           task_3_water_step_matrix[water_placement_idx].append(step)
-          #TODO: Decide whether this should be step or step-1
       if not found:
         #times_to_reach_town.append(-1)
         pass
@@ -279,4 +276,6 @@ if __name__ == '__main__':
   
   task_3(NUM_SIMULATIONS_TASK_3)
   plot_task_3(task_3_water_step_matrix)
+
+
   
